@@ -1,92 +1,110 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from datetime import date
-import sys
-
-# Условние задания
-# Использовать словарь, содержащий следующие ключи: название товара; название
+# Вариант 17. Использовать словарь, содержащий следующие ключи: название товара; название
 # магазина, в котором продается товар; стоимость товара в руб. Написать программу,
 # выполняющую следующие действия: ввод с клавиатуры данных в список, состоящий из
 # словарей заданной структуры; записи должны быть размещены в алфавитном порядке по
-# названиям товаров; вывод на экран информации о товарах, продающихся в магазине,
-# название которого введено с клавиатуры; если такого магазина нет, выдать на дисплей
-# соответствующее сообщение.
+# названиям
+# товаров; вывод на экран информации о товаре, название которого введено с клавиатуры;
+# если таких товаров нет, выдать на дисплей соответствующее сообщение.
+
+import sys
 
 if __name__ == '__main__':
-    products = []
+    # Список магазинов.
+    market = []
 
+    # Организовать бесконечный цикл запроса команд.
     while True:
+        # Запросить команду из терминала.
         command = input(">>> ").lower()
 
+        # Выполнить действие в соответствие с командой.
         if command == 'exit':
             break
 
         elif command == 'add':
-            name = input("Название товара? ")
+            # Запросить данные о товаре.
+            product = input("Название товара? ")
             shop = input("Название магазина? ")
-            coast = int(input("Введите его цену "))
+            price = float(input("Стоимость товара в руб.? "))
 
-            product = {
-                'name': name,
+            # Создать словарь.
+            markets = {
+                'product': product,
                 'shop': shop,
-                'coast': coast,
+                'price': price,
             }
 
-            products.append(product)
-            if len(product) > 1:
-                products.sort(key=lambda item: item.get('name', ''))
+            # Добавить словарь в список.
+            market.append(markets)
+            # Отсортировать список в случае необходимости.
+            if len(market) > 1:
+                market.sort(key=lambda item: item.get('name', ''))
 
         elif command == 'list':
+            # Заголовок таблицы.
             line = '+-{}-+-{}-+-{}-+-{}-+'.format(
                 '-' * 4,
                 '-' * 30,
                 '-' * 20,
-                '-' * 8
+                '-' * 20
             )
             print(line)
             print(
-                ' | {:^4} | {:^30} | {:^20} | {:^8} |'.format(
-                    "№",
-                    "Наименование товара",
-                    "Название магазина",
-                    "Стоимость"
+                '| {:^4} | {:^30} | {:^20} | {:^20} |'.format(
+                    "No",
+                    "Товар",
+                    "Магазин",
+                    "Стоимость в руб."
                 )
             )
             print(line)
 
-            for idx, product in enumerate(products, 1):
+            # Вывести данные о всех товарах.
+            for idx, markets in enumerate(market, 1):
                 print(
-                    '| {:>4} | {:<30} | {:<20} | {:>8} |'.format(
+                    '| {:>4} | {:<30} | {:<20} | {:>20} |'.format(
                         idx,
-                        product.get('name', ''),
-                        product.get('shop', ''),
-                        product.get('coast', 0)
+                        markets.get('product', ''),
+                        markets.get('shop', ''),
+                        markets.get('price', 0)
                     )
                 )
 
             print(line)
 
-        elif command.startswith('select'):
-            name_user = input("Введите название интересующего магазина ")
+        elif command.startswith('select '):
 
+            parts = command.split(' ', maxsplit=2)
+            # Получить требуемый стаж.
+            period = str(parts[1])
+
+            # Инициализировать счетчик.
             count = 0
-            for product in products:
-                if name_user == product.get('shop'):
+            # Проверить сведения товара из списка.
+            for markets in market:
+                if markets.get('product') >= period:
                     count += 1
                     print(
-                        '{:>4}: {} {}'.format(count, product.get('coast', ' '), product.get('name', ' '))
+                        '{:>4}: {}'.format(count, markets.get('product', ''))
                     )
+                    print('Название магазина:', markets.get('shop', ''))
+                    print('Стоимость в руб.:', markets.get('price', ''))
+
+            # Если счетчик равен 0, то товары не найдены.
             if count == 0:
-                print("Магазин с таким названием не найден")
+                print("Продукт не найден.")
 
         elif command == 'help':
             # Вывести справку о работе с программой.
             print("Список команд:\n")
-            print("add - добавить товары;")
-            print("list - вывести список товаров;")
-            print("select <магазин> - запросить товары в выбранном магазине")
+            print("add - добавить продукт;")
+            print("list - вывести список продуктов;")
+            print("select <товар> - информация о товаре;")
             print("help - отобразить справку;")
             print("exit - завершить работу с программой.")
+
         else:
             print(f"Неизвестная команда {command}", file=sys.stderr)
